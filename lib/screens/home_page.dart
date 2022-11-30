@@ -30,28 +30,32 @@ class HomePage extends ConsumerWidget {
               icon: const Icon(Icons.bar_chart))
         ],
       ),
-      body: Consumer(
-        builder: (context, ref, child) {
-          return Column(
-            children: [
-              Text(
-                'Your Todos: ',
-                style: Theme.of(context).textTheme.headline3,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: toDos.length,
-                  itemBuilder: (context, index) {
-                    final todo = toDos[index];
-                    return todoCard(todo, ref, context, subtitleController,
-                        titleController);
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+      body: ref.read(todoNotifierProvider.notifier).length == 0
+          ? const Center(
+              child: Text('You Dont Have Any Todo\'s'),
+            )
+          : Consumer(
+              builder: (context, ref, child) {
+                return Column(
+                  children: [
+                    Text(
+                      'Your Todos: ',
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: toDos.length,
+                        itemBuilder: (context, index) {
+                          final todo = toDos[index];
+                          return todoCard(todo, ref, context,
+                              subtitleController, titleController);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
           onPressed: () async {
             final todo =
