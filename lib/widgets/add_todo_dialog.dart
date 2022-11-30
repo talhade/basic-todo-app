@@ -29,7 +29,8 @@ Future<Todo?> todoDialog(
             ),
             TextField(
               controller: subtitleController,
-              decoration: const InputDecoration(labelText: 'Enter Description'),
+              decoration:
+                  const InputDecoration(labelText: 'Enter Description:'),
               onChanged: (value) {
                 subtitle = value;
               },
