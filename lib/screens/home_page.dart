@@ -34,7 +34,8 @@ class HomePage extends ConsumerWidget {
                   itemCount: toDos.length,
                   itemBuilder: (context, index) {
                     final todo = toDos[index];
-                    return todoCard(todo, ref);
+                    return todoCard(todo, ref, context, subtitleController,
+                        titleController);
                   },
                 ),
               ),
@@ -56,11 +57,26 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-Card todoCard(Todo todo, WidgetRef ref) {
+Card todoCard(
+    Todo todo,
+    WidgetRef ref,
+    BuildContext context,
+    TextEditingController titleController,
+    TextEditingController subtitleController) {
   return Card(
     child: ListTile(
       title: Text(todo.title),
       subtitle: Text(todo.subtitle),
+      trailing: IconButton(
+        onPressed: () async {
+          final updatedTodo = await todoDialog(
+              context, titleController, subtitleController, todo);
+          if (updatedTodo != null) {
+            ref.read(TodoNotifierProvider.notifier).update(updatedTodo);
+          }
+        },
+        icon: const Icon(Icons.edit),
+      ),
       leading: Checkbox(
         value: todo.isChecked,
         onChanged: (value) {
