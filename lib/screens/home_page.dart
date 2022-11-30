@@ -3,6 +3,7 @@ import 'package:basic_todo_app/riverpod/todo_provider.dart';
 import 'package:basic_todo_app/widgets/add_todo_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 final TodoNotifierProvider = ChangeNotifierProvider<TodoNotifier>((ref) {
   return TodoNotifier();
@@ -64,24 +65,39 @@ Card todoCard(
     TextEditingController titleController,
     TextEditingController subtitleController) {
   return Card(
-    child: ListTile(
-      title: Text(todo.title),
-      subtitle: Text(todo.subtitle),
-      trailing: IconButton(
-        onPressed: () async {
-          final updatedTodo = await todoDialog(
-              context, titleController, subtitleController, todo);
-          if (updatedTodo != null) {
-            ref.read(TodoNotifierProvider.notifier).update(updatedTodo);
-          }
-        },
-        icon: const Icon(Icons.edit),
+    child: Slidable(
+      direction: Axis.horizontal,
+      endActionPane: ActionPane(
+        motion: const BehindMotion(),
+        children: [
+          SlidableAction(
+            backgroundColor: Colors.red,
+            onPressed: (context) {
+              ref.read(TodoNotifierProvider).removeTodo(todo);
+            },
+            icon: Icons.delete,
+          )
+        ],
       ),
-      leading: Checkbox(
-        value: todo.isChecked,
-        onChanged: (value) {
-          return ref.read(TodoNotifierProvider.notifier).checkTodo(todo);
-        },
+      child: ListTile(
+        title: Text(todo.title),
+        subtitle: Text(todo.subtitle),
+        trailing: IconButton(
+          onPressed: () async {
+            final updatedTodo = await todoDialog(
+                context, titleController, subtitleController, todo);
+            if (updatedTodo != null) {
+              ref.read(TodoNotifierProvider.notifier).update(updatedTodo);
+            }
+          },
+          icon: const Icon(Icons.edit),
+        ),
+        leading: Checkbox(
+          value: todo.isChecked,
+          onChanged: (value) {
+            return ref.read(TodoNotifierProvider.notifier).checkTodo(todo);
+          },
+        ),
       ),
     ),
   );
