@@ -22,4 +22,15 @@ class TodoNotifier extends ChangeNotifier {
       }
     }
   }
+
+  void update(Todo existingTodo) {
+    final index = todoList.indexOf(existingTodo);
+    final oldTodo = todoList[index];
+    if (oldTodo.title != existingTodo.title ||
+        oldTodo.subtitle != existingTodo.subtitle) {
+      todoList[index] =
+          oldTodo.update(existingTodo.title, existingTodo.subtitle);
+    }
+    notifyListeners();
+  }
 }
