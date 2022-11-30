@@ -1,11 +1,12 @@
 import 'package:basic_todo_app/models/todo.dart';
 import 'package:basic_todo_app/riverpod/todo_provider.dart';
+import 'package:basic_todo_app/screens/statistics_page.dart';
 import 'package:basic_todo_app/widgets/add_todo_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-final TodoNotifierProvider = ChangeNotifierProvider<TodoNotifier>((ref) {
+final todoNotifierProvider = ChangeNotifierProvider<TodoNotifier>((ref) {
   return TodoNotifier();
 });
 
@@ -16,11 +17,18 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     TextEditingController titleController = TextEditingController();
     TextEditingController subtitleController = TextEditingController();
-    List<Todo> toDos = ref.watch(TodoNotifierProvider).todoList;
+    List<Todo> toDos = ref.watch(todoNotifierProvider).todoList;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('ToDo App'),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const StatisticsPage(),
+                  )),
+              icon: const Icon(Icons.bar_chart))
+        ],
       ),
       body: Consumer(
         builder: (context, ref, child) {
@@ -49,7 +57,7 @@ class HomePage extends ConsumerWidget {
             final todo =
                 await todoDialog(context, titleController, subtitleController);
             if (todo != null) {
-              final todos = ref.read(TodoNotifierProvider);
+              final todos = ref.read(todoNotifierProvider);
               todos.addTodo(todo);
             }
           },
@@ -73,7 +81,7 @@ Card todoCard(
           SlidableAction(
             backgroundColor: Colors.red,
             onPressed: (context) {
-              ref.read(TodoNotifierProvider).removeTodo(todo);
+              ref.read(todoNotifierProvider).removeTodo(todo);
             },
             icon: Icons.delete,
           )
@@ -87,7 +95,7 @@ Card todoCard(
             final updatedTodo = await todoDialog(
                 context, titleController, subtitleController, todo);
             if (updatedTodo != null) {
-              ref.read(TodoNotifierProvider.notifier).update(updatedTodo);
+              ref.read(todoNotifierProvider.notifier).update(updatedTodo);
             }
           },
           icon: const Icon(Icons.edit),
@@ -95,7 +103,7 @@ Card todoCard(
         leading: Checkbox(
           value: todo.isChecked,
           onChanged: (value) {
-            return ref.read(TodoNotifierProvider.notifier).checkTodo(todo);
+            return ref.read(todoNotifierProvider.notifier).checkTodo(todo);
           },
         ),
       ),

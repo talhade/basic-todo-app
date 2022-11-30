@@ -33,4 +33,18 @@ class TodoNotifier extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  int get length {
+    return todoList.length;
+  }
+
+  int get checkedTodos {
+    int length = 0;
+    for (final i in todoList) {
+      if (i.isChecked == true) {
+        length += 1;
+      }
+    }
+    return length;
+  }
 }
